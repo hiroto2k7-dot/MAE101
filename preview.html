@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Đề Thi Trắc Nghiệm Tương Tác - Đạo Hàm và Nguyên Hàm</title>
+
+<!-- MathJax -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(','\\)'], ['$', '$']]
+  }
+};
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+    *{
+        box-sizing:border-box;
+    }
+
+    body{
+        font-family: Arial, sans-serif;
+        margin:0;
+        background:#f4f7fb;
+        color:#222;
+        line-height:1.6;
+    }
+
+    header{
+        background:linear-gradient(135deg,#004c99,#0077cc);
+        color:white;
+        padding:30px;
+        text-align:center;
+    }
+
+    header h1{
+        margin:0;
+        font-size:36px;
+    }
+
+    header p{
+        margin-top:10px;
+        font-size:18px;
+    }
+
+    .container{
+        width:95%;
+        max-width:1200px;
+        margin:30px auto;
+    }
+
+    .score-board{
+        background:white;
+        padding:20px;
+        border-radius:15px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.1);
+        margin-bottom:25px;
+        position:sticky;
+        top:10px;
+        z-index:100;
+    }
+
+    .score-board h2{
+        margin:0;
+        color:#004c99;
+    }
+
+    .question-card{
+        background:white;
+        margin-bottom:25px;
+        padding:25px;
+        border-radius:18px;
+        box-shadow:0 4px 14px rgba(0,0,0,0.08);
+        border-left:8px solid #0077cc;
+    }
+
+    .question-title{
+        font-size:20px;
+        font-weight:bold;
+        margin-bottom:18px;
+    }
+
+    .difficulty{
+        display:inline-block;
+        padding:5px 12px;
+        border-radius:20px;
+        font-size:13px;
+        color:white;
+        margin-left:10px;
+    }
+
+    .easy{
+        background:#2ecc71;
+    }
+
+    .medium{
+        background:#f39c12;
+    }
+
+    .hard{
+        background:#e74c3c;
+    }
+
+    .theory{
+        background:#8e44ad;
+    }
+
+    .option{
+        border:2px solid #ddd;
+        padding:14px;
+        border-radius:12px;
+        margin-bottom:12px;
+        cursor:pointer;
+        transition:0.25s;
+    }
+
+    .option:hover{
+        background:#eef5ff;
+        border-color:#0077cc;
+    }
+
+    .correct{
+        background:#d4edda !important;
+        border-color:#28a745 !important;
+        color:#155724;
+        font-weight:bold;
+    }
+
+    .wrong{
+        background:#f8d7da !important;
+        border-color:#dc3545 !important;
+        color:#721c24;
+        font-weight:bold;
+    }
+
+    .disabled{
+        pointer-events:none;
+    }
+
+    .explanation{
+        margin-top:18px;
+        padding:18px;
+        border-radius:12px;
+        background:#f1f8ff;
+        border-left:6px solid #0077cc;
+        display:none;
+    }
+
+    .tip{
+        margin-top:12px;
+        background:#fff9db;
+        border-left:5px solid #f1c40f;
+        padding:12px;
+        border-radius:10px;
+    }
+
+    .final-box{
+        background:white;
+        padding:30px;
+        border-radius:18px;
+        text-align:center;
+        margin-top:40px;
+        box-shadow:0 4px 14px rgba(0,0,0,0.1);
+    }
+
+    button{
+        padding:14px 28px;
+        border:none;
+        border-radius:12px;
+        background:#0077cc;
+        color:white;
+        font-size:18px;
+        cursor:pointer;
+        transition:0.25s;
+    }
+
+    button:hover{
+        background:#005fa3;
+    }
+
+    .footer{
+        text-align:center;
+        padding:30px;
+        color:#555;
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>ĐỀ THI TRẮC NGHIỆM TƯƠNG TÁC</h1>
+    <p>Đạo hàm và Nguyên hàm – Triết lý mất mát và khôi phục thông tin</p>
+</header>
+
+<div class="container">
+
+    <div class="score-board">
+        <h2>Điểm hiện tại: <span id="score">0</span> / 20</h2>
+    </div>
+
+    <div id="quiz-container"></div>
+
+    <div class="final-box">
+        <h2>Kết thúc bài thi</h2>
+        <p>Hoàn thành toàn bộ 20 câu để xem kết quả cuối cùng.</p>
+
+        <button onclick="showFinal()">Xem kết quả</button>
+
+        <h2 id="final-result" style="margin-top:25px;color:#004c99;"></h2>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p><i>“Đạo hàm quên quá khứ – nguyên hàm nhìn về nguồn cội.”</i></p>
+</div>
+
+<script>
+
+const questions = [
+
+/* =========================
+   5 CÂU LÝ THUYẾT
+========================= */
+
+{
+    type:"Lý thuyết",
+    difficulty:"theory",
+    question:"Theo bài giảng, đạo hàm được xem là gì?",
+    options:[
+        "Phép ghi nhớ toàn bộ lịch sử",
+        "Phép chiếu mất mát thông tin",
+        "Phép nhân vô hạn",
+        "Phép đối xứng"
+    ],
+    answer:1,
+    explanation:"Đạo hàm giữ lại tốc độ thay đổi nhưng làm mất thông tin tuyệt đối về hằng số ban đầu.",
+    tip:"Khi thấy \\((C)'=0\\), hãy nhớ: đạo hàm xóa dấu vết quá khứ."
+},
+
+{
+    type:"Lý thuyết",
+    difficulty:"theory",
+    question:"Ý nghĩa triết học của nguyên hàm là gì?",
+    options:[
+        "Xóa lịch sử",
+        "Làm giảm dữ liệu",
+        "Khôi phục quá khứ nhưng không duy nhất",
+        "Biến đổi Fourier"
+    ],
+    answer:2,
+    explanation:"Nguyên hàm khôi phục hình dạng ban đầu nhưng luôn có thêm hằng số \\(C\\).",
+    tip:"Nếu thấy tích phân bất định, luôn nhớ cộng \\(+C\\)."
+},
+
+{
+    type:"Lý thuyết",
+    difficulty:"theory",
+    question:"Cấu trúc chung của tổng telescope, Newton-Leibniz và Stokes là gì?",
+    options:[
+        "Trong triệt tiêu, chỉ còn biên",
+        "Nhân rồi chia",
+        "Giới hạn vô cực",
+        "Đạo hàm cấp hai"
+    ],
+    answer:0,
+    explanation:"Các cấu trúc này đều có tính chất phần giữa triệt tiêu và chỉ còn biên.",
+    tip:"Telescope = giữa khử hết."
+},
+
+{
+    type:"Lý thuyết",
+    difficulty:"theory",
+    question:"Nguyên lý 'Deconstruction' nghĩa là gì?",
+    options:[
+        "Học thuộc công thức",
+        "Chia nhỏ bài toán",
+        "Xây dựng lại kiến thức từ logic",
+        "Bỏ toán học"
+    ],
+    answer:2,
+    explanation:"Deconstruction là tái tạo tri thức từ gốc thay vì học vẹt.",
+    tip:"Hiểu bản chất trước rồi mới nhớ công thức."
+},
+
+{
+    type:"Lý thuyết",
+    difficulty:"theory",
+    question:"Theo bài giảng, đạo hàm hỏi điều gì?",
+    options:[
+        "Bạn đã ở đâu?",
+        "Bạn đang thay đổi thế nào ngay lúc này?",
+        "Bạn nhớ gì?",
+        "Bạn tích lũy được gì?"
+    ],
+    answer:1,
+    explanation:"Đạo hàm mô tả tốc độ thay đổi tức thời.",
+    tip:"Đạo hàm = hiện tại."
+},
+
+/* =========================
+   5 CÂU DỄ
+========================= */
+
+{
+    type:"Dễ",
+    difficulty:"easy",
+    question:"Tính đạo hàm của \\(f(x)=x^2+5\\)",
+    options:[
+        "\\(2x\\)",
+        "\\(x\\)",
+        "\\(2x+5\\)",
+        "\\(x^2\\)"
+    ],
+    answer:0,
+    explanation:"Đạo hàm của \\(x^2\\) là \\(2x\\), còn hằng số 5 có đạo hàm bằng 0.",
+    tip:"Hằng số biến mất khi lấy đạo hàm."
+},
+
+{
+    type:"Dễ",
+    difficulty:"easy",
+    question:"Tính \\(\\int 2x\\,dx\\)",
+    options:[
+        "\\(x^2\\)",
+        "\\(x^2+C\\)",
+        "\\(2x^2\\)",
+        "\\(x+C\\)"
+    ],
+    answer:1,
+    explanation:"Nguyên hàm của \\(2x\\) là \\(x^2+C\\).",
+    tip:"Luôn thêm \\(+C\\) với tích phân bất định."
+},
+
+{
+    type:"Dễ",
+    difficulty:"easy",
+    question:"Đạo hàm của hằng số \\(7\\) là:",
+    options:[
+        "7",
+        "1",
+        "0",
+        "\\(-7\\)"
+    ],
+    answer:2,
+    explanation:"Mọi hằng số đều có đạo hàm bằng 0.",
+    tip:"Không đổi ⇒ tốc độ thay đổi bằng 0."
+},
+
+{
+    type:"Dễ",
+    difficulty:"easy",
+    question:"\\(\\int 5dx = ?\\)",
+    options:[
+        "\\(5\\)",
+        "\\(x^5\\)",
+        "\\(5x+C\\)",
+        "\\(C\\)"
+    ],
+    answer:2,
+    explanation:"Nguyên hàm của hằng số a là \\(ax+C\\).",
+    tip:"Hằng số nhân thêm x."
+},
+
+{
+    type:"Dễ",
+    difficulty:"easy",
+    question:"\\(\\frac{d}{dx}(\\sin x)=?\\)",
+    options:[
+        "\\(\\cos x\\)",
+        "\\(-\\sin x\\)",
+        "\\(\\tan x\\)",
+        "1"
+    ],
+    answer:0,
+    explanation:"Đây là công thức đạo hàm cơ bản.",
+    tip:"sin → cos."
+},
+
+/* =========================
+   5 CÂU TRUNG BÌNH
+========================= */
+
+{
+    type:"Trung bình",
+    difficulty:"medium",
+    question:"Tính \\(\\frac{d}{dx}(3x^3-2x+1)\\)",
+    options:[
+        "\\(9x^2-2\\)",
+        "\\(6x-2\\)",
+        "\\(9x^2\\)",
+        "\\(3x^2-2\\)"
+    ],
+    answer:0,
+    explanation:"Đạo hàm từng hạng tử: \\((3x^3)'=9x^2\\), \\((-2x)'=-2\\).",
+    tip:"Dùng quy tắc \\((x^n)'=nx^{n-1}\\)."
+},
+
+{
+    type:"Trung bình",
+    difficulty:"medium",
+    question:"\\(\\int (3x^2)dx = ?\\)",
+    options:[
+        "\\(x^3+C\\)",
+        "\\(3x+C\\)",
+        "\\(x^2+C\\)",
+        "\\(6x+C\\)"
+    ],
+    answer:0,
+    explanation:"Vì đạo hàm của \\(x^3\\) là \\(3x^2\\).",
+    tip:"Nguyên hàm là quá trình ngược đạo hàm."
+},
+
+{
+    type:"Trung bình",
+    difficulty:"medium",
+    question:"Nếu \\(f'(x)=0\\) với mọi x thì:",
+    options:[
+        "f(x)=x",
+        "f(x)=0",
+        "f(x)=C",
+        "Không xác định"
+    ],
+    answer:2,
+    explanation:"Nếu đạo hàm bằng 0 mọi nơi thì hàm số là hằng số.",
+    tip:"Không đổi ⇒ độ dốc bằng 0."
+},
+
+{
+    type:"Trung bình",
+    difficulty:"medium",
+    question:"Tính \\(\\int_0^2 2x dx\\)",
+    options:[
+        "1",
+        "2",
+        "4",
+        "8"
+    ],
+    answer:1,
+    explanation:"\\(\\int_0^2 2x dx=[x^2]_0^2=4\\).",
+    tip:"Tính nguyên hàm trước rồi thay cận."
+},
+
+{
+    type:"Trung bình",
+    difficulty:"medium",
+    question:"Đạo hàm của \\(x^5\\) là:",
+    options:[
+        "\\(x^4\\)",
+        "\\(5x^4\\)",
+        "\\(4x^5\\)",
+        "\\(5x\\)"
+    ],
+    answer:1,
+    explanation:"Áp dụng quy tắc lũy thừa.",
+    tip:"Hạ số mũ xuống trước."
+},
+
+/* =========================
+   5 CÂU KHÓ
+========================= */
+
+{
+    type:"Khó",
+    difficulty:"hard",
+    question:"Nếu \\(f'(x)=4x^3\\) và \\(f(1)=5\\), tìm \\(f(x)\\)",
+    options:[
+        "\\(x^4+1\\)",
+        "\\(x^4+4\\)",
+        "\\(4x^4+1\\)",
+        "\\(x^4+5\\)"
+    ],
+    answer:1,
+    explanation:"\\(f(x)=x^4+C\\). Thay \\(x=1\\): \\(1+C=5\\Rightarrow C=4\\).",
+    tip:"Dùng điều kiện ban đầu để tìm \\(C\\)."
+},
+
+{
+    type:"Khó",
+    difficulty:"hard",
+    question:"Tính \\(\\int (6x^2-4x+1)dx\\)",
+    options:[
+        "\\(2x^3-2x^2+x+C\\)",
+        "\\(6x^3-4x^2+x\\)",
+        "\\(3x^2-4x+C\\)",
+        "\\(2x^3-4x+x+C\\)"
+    ],
+    answer:0,
+    explanation:"Lấy nguyên hàm từng hạng tử.",
+    tip:"Chia cho số mũ mới sau khi tăng số mũ."
+},
+
+{
+    type:"Khó",
+    difficulty:"hard",
+    question:"Cho \\(F'(x)=f(x)\\). Khi đó \\(\\int_a^b f(x)dx\\) bằng:",
+    options:[
+        "\\(F(a)-F(b)\\)",
+        "\\(F(b)-F(a)\\)",
+        "\\(f(b)-f(a)\\)",
+        "0"
+    ],
+    answer:1,
+    explanation:"Theo định lý Newton-Leibniz.",
+    tip:"Cận trên trừ cận dưới."
+},
+
+{
+    type:"Khó",
+    difficulty:"hard",
+    question:"Nếu hai hàm có cùng đạo hàm thì chúng:",
+    options:[
+        "Bằng nhau hoàn toàn",
+        "Khác nhau bởi một hằng số",
+        "Không liên quan",
+        "Đều bằng 0"
+    ],
+    answer:1,
+    explanation:"Vì đạo hàm làm mất hằng số.",
+    tip:"Cùng tốc độ thay đổi ⇒ chỉ lệch nhau mốc xuất phát."
+},
+
+{
+    type:"Khó",
+    difficulty:"hard",
+    question:"Tính \\(\\frac{d}{dx}(x^2\\sin x)\\)",
+    options:[
+        "\\(2x\\sin x + x^2\\cos x\\)",
+        "\\(2x\\cos x\\)",
+        "\\(x^2\\cos x\\)",
+        "\\(2x\\sin x\\)"
+    ],
+    answer:0,
+    explanation:"Dùng quy tắc đạo hàm tích.",
+    tip:"(uv)' = u'v + uv'."
+}
+
+];
+
+let score = 0;
+const quizContainer = document.getElementById("quiz-container");
+
+questions.forEach((q, index)=>{
+
+    const card = document.createElement("div");
+    card.className = "question-card";
+
+    card.innerHTML = `
+        <div class="question-title">
+            Câu ${index+1}. ${q.question}
+            <span class="difficulty ${q.difficulty}">
+                ${q.type}
+            </span>
+        </div>
+    `;
+
+    q.options.forEach((opt, i)=>{
+
+        const option = document.createElement("div");
+        option.className = "option";
+        option.innerHTML = opt;
+
+        option.onclick = ()=>{
+
+            const allOptions = card.querySelectorAll(".option");
+
+            allOptions.forEach(o=>o.classList.add("disabled"));
+
+            if(i===q.answer){
+                option.classList.add("correct");
+                score++;
+                document.getElementById("score").innerText = score;
+            }else{
+                option.classList.add("wrong");
+                allOptions[q.answer].classList.add("correct");
+            }
+
+            const exp = card.querySelector(".explanation");
+            exp.style.display = "block";
+
+            MathJax.typesetPromise();
+        };
+
+        card.appendChild(option);
+    });
+
+    const explanation = document.createElement("div");
+    explanation.className = "explanation";
+
+    explanation.innerHTML = `
+        <b>Giải thích:</b> ${q.explanation}
+
+        <div class="tip">
+            <b>Mẹo làm nhanh:</b> ${q.tip}
+        </div>
+    `;
+
+    card.appendChild(explanation);
+
+    quizContainer.appendChild(card);
+});
+
+function showFinal(){
+
+    const result = document.getElementById("final-result");
+
+    let rank = "";
+
+    if(score>=18){
+        rank = "Xuất sắc";
+    }
+    else if(score>=15){
+        rank = "Giỏi";
+    }
+    else if(score>=10){
+        rank = "Khá";
+    }
+    else{
+        rank = "Cần ôn tập thêm";
+    }
+
+    result.innerHTML = `
+        Bạn đạt <b>${score}/20</b> điểm <br><br>
+        Xếp loại: <b>${rank}</b>
+    `;
+}
+
+</script>
+
+</body>
+</html>
